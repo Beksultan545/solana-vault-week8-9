@@ -192,3 +192,60 @@ vault-simple/
 2. Добавить минимальный депозит (например, 1 токен).
 3. Добавить флаг `paused` в `VaultState`: админ может остановить депозиты.
 4. Написать тест: трое пользователей вносят разные суммы, проверить доли по shares.
+
+## 8-апта — Liquidity Vault қаңқасы
+
+### Орындалған жұмыс
+
+- Бағдарлама devnet желісіне орналастырылды.
+- initialize_vault арқылы VaultState, токен қоймасы және share mint құрылды.
+- create_user_card арқылы екі пайдаланушының жеке PDA карточкасы құрылды.
+- Бір пайдаланушыға екінші карточка ашу әрекеті қабылданбады.
+- Шаблондағы 7 тест сәтті өтті. Оның ішінде 9-аптаға арналған депозит тесттері де бар.
+
+### Аккаунттар схемасы
+
+```mermaid
+flowchart TD
+    P["Simple Vault бағдарламасы"] -->|"деректерін басқарады"| V["VaultState PDA"]
+    P -->|"деректерін басқарады"| U["UserCard PDA"]
+    U -->|"vault өрісі"| V
+    V -->|"token authority"| T["Vault токен қоймасы"]
+    V -->|"mint authority"| S["Share mint"]
+```
+
+VaultState және UserCard аккаунттарының Solana owner-і — біздің бағдарлама.
+Токен қоймасы мен share mint аккаунттарының Solana owner-і — SPL Token Program.
+Қоймадағы токендерді басқару және share-токен шығару өкілеттігі VaultState PDA-ға берілген.
+
+### PDA seeds
+
+| Аккаунт | Seeds |
+|---|---|
+| VaultState | ["vault", token_mint] |
+| Токен қоймасы | ["vault_tokens", token_mint] |
+| Share mint | ["share_mint", token_mint] |
+| UserCard | ["user_card", vault_state, user] |
+
+UserCard адресі vault пен пайдаланушы адресінен есептеледі.
+Сондықтан бір vault ішінде әр пайдаланушының бір ғана карточкасы болады.
+PDA-ның жеке кілті жоқ; бағдарлама тиісті seeds арқылы CPI кезінде оның атынан қол қоя алады.
+
+### Devnet сілтемелері
+
+- [Бағдарлама](https://explorer.solana.com/address/3gXDYQzb7iEjuVQVS5mxnzF9y6DgkBjKUpgxSJF9APzN?cluster=devnet)
+- [VaultState](https://explorer.solana.com/address/2SmkpaVZUaVZGALVaPsY3XJL9xjx9Ambh56UkNaPqY7A?cluster=devnet)
+- [Қабылданатын токен mint](https://explorer.solana.com/address/6cRtG2KVL9q4UHxviytJS8x5BT1FjLckAraNcWVkcrMX?cluster=devnet)
+- [Токен қоймасы](https://explorer.solana.com/address/CEZbQmzkpCYoveg5FrtqZk7gF32TEGHd2SzYq8Ex9sVE?cluster=devnet)
+- [Share mint](https://explorer.solana.com/address/Ey4zwC7amaUvQFj3H4Thvk5tYwJDJsqdE1NXxU7bYzBk?cluster=devnet)
+- [Бірінші пайдаланушы карточкасы](https://explorer.solana.com/address/3qSAGadwRRD8iw3tYJBpkMCCQkD7GLwbLmwoFN6v9zxc?cluster=devnet)
+- [Екінші пайдаланушы карточкасы](https://explorer.solana.com/address/CirsoChvobeAVqZm9soJbBnC6C8qEFMVotUAQKQYDzBB?cluster=devnet)
+
+### Тексеру нәтижесі
+
+yarn test: 7 passing.
+
+Тесттерден кейінгі жалпы есеп:
+150000000 ең кіші бірлік = 150 токен;
+150000000 ең кіші бірлік = 150 share-токен.
+
