@@ -249,3 +249,48 @@ yarn test: 7 passing.
 150000000 ең кіші бірлік = 150 токен;
 150000000 ең кіші бірлік = 150 share-токен.
 
+
+## 9-апта — Депозит және share-токендер
+
+### Депозиттің жұмысы
+
+Шаблондағы deposit(amount) функциясы devnet желісінде тексерілді.
+
+1. Пайдаланушы алатын share-токен саны есептеледі.
+2. SPL Token Program арқылы пайдаланушыдан vault қоймасына токен аударылады.
+   Аударымды пайдаланушы өз қолымен растайды.
+3. VaultState PDA өкілеттігімен пайдаланушыға share-токендер шығарылады.
+4. VaultState ішіндегі total_tokens және total_shares, сондай-ақ UserCard
+   ішіндегі deposited және shares өрістері жаңартылады.
+5. Нөлдік депозит қабылданбайды.
+
+### Share есептеу
+
+Алғашқы депозит: shares = amount.
+Келесі депозиттер: shares = amount × total_shares / total_tokens.
+Есеп депозит енгізілгенге дейінгі мәндермен орындалады.
+
+Егер vault табыс тауып, токен саны өссе, share бағасы артады.
+Сондықтан кейінгі салымшы енгізген токенінен аз share алуы мүмкін.
+Біздің тестте табыс қосылмағандықтан, қатынас 1:1 болды.
+
+### Тексеру нәтижелері
+
+- A пайдаланушысы: 100 токен енгізді, 100 share алды.
+- B пайдаланушысы: 50 токен енгізді, 50 share алды.
+- Жалпы: 150 токен және 150 share.
+- Карточкасыз депозит қабылданбады.
+- Нөлдік депозит қабылданбады.
+- Барлық 7 тест өтті.
+
+### Explorer дәлелдері
+
+[100 токендік депозит](https://explorer.solana.com/tx/5eCtpK2wsobBDHXCrDmUH5quZgu1nG2BBTihq6caQm46f3GVNvwhQ1Sb6Tbwaj4SYTyrrRAGJfi8mgmPMwGNMZUT?cluster=devnet)
+
+[50 токендік депозит](https://explorer.solana.com/tx/3oKiCqtHo8P2SzSXWkvjVBSFJd56Sp8BoUkTs67smQHy2NFMSVF2oMJYgjJqebpc5NEMmcVrHgQ1HU2UGrGJLgsD?cluster=devnet)
+
+50 токендік депозиттің статусы — Success / Finalized.
+Транзакцияда Simple Vault бағдарламасы SPL Token Program бағдарламасын
+CPI арқылы екі рет шақырған: Transfer және Mint To.
+Transfer authority — пайдаланушы; Mint To authority — VaultState PDA.
+
