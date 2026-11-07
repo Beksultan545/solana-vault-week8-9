@@ -292,3 +292,21 @@ yarn test: 7 passing.
 Транзакцияда Simple Vault бағдарламасы SPL Token Program бағдарламасын
 CPI арқылы екі рет шақырған: Transfer және Mint To.
 Transfer authority — пайдаланушы; Mint To authority — VaultState PDA.
+
+## 10-апта — CPI және vault-тан токен шығару
+
+`withdraw(shares_amount)` пайдаланушының share-токендерін сөндіріп, оның үлесін қоймадан қайтарады. Шығарылатын токен саны операцияға дейінгі мәндермен есептеледі:
+
+`tokens_out = shares_amount × total_tokens / total_shares`
+
+CPI — бір бағдарламаның басқа бағдарламаны шақыруы. Explorer-дегі `Inner Instructions` бөлімінде Simple Vault бағдарламасының SPL Token Program-ға жасаған екі шақыруы көрінеді:
+
+1. **Burn** — пайдаланушының 50 share-токені сөндіріледі. Операцияны пайдаланушы өз әмиянымен растайды.
+2. **Transfer** — қоймадан пайдаланушының токен аккаунтына 50 токен аударылады. Қойманы басқару құқығы VaultState PDA-ға берілген, сондықтан аударымды бағдарлама сол PDA атынан растайды.
+
+A пайдаланушысы 50 токен шығарғаннан кейін vault-та 100 токен және 100 share қалды. B өзіндегі 50 share-токеннің бәрін қайтарды. Осыдан кейін vault-та 50 токен және 50 share қалды.
+
+- [A пайдаланушысының шығару транзакциясы](https://explorer.solana.com/tx/LHLpD4nwk6X4P4fGMvF4uZwbWUg9KDsiqHzXQgfd1nKH828RNBFmZkiijm2xFf2tybcB4QdTVdamHwgSzPKSG2r?cluster=devnet)
+- [B пайдаланушысының шығару транзакциясы](https://explorer.solana.com/tx/2aYSRUNzcJcyLag52b8i93oqYKmLtVdHoFLxArEdevwnDjigsxLPhvmYTgfqu4CxSgiwpJCFev5uCVtaFAXimfQD?cluster=devnet)
+
+Бағдарлама devnet-ке сәтті жүктелді. `yarn test` нәтижесі — `12 passing`. Нөлдік сомамен, баланстан артық және карточкасыз шығару әрекеттері қабылданбады.
