@@ -230,7 +230,6 @@ async function main(): Promise<void> {
       "- [Позиция аккаунты](" + explorer(result.personalPosition) + ")",
       "- [Позиция NFT mint](" + explorer(result.nftMint) + ")",
       "- [NFT токен аккаунты](" + explorer(result.positionNftAccount) + ")",
-      "- [Protocol position](" + explorer(result.protocolPosition) + ")",
       "- [Төменгі tick array](" + explorer(result.tickArrayLower) + ")",
       "- [Жоғарғы tick array](" + explorer(result.tickArrayUpper) + ")",
       "- [Пулдың vaultA аккаунты](" + explorer(poolAccounts.vaultA) + ")",
