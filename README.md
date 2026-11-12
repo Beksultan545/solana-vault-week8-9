@@ -335,3 +335,33 @@ CLMM-де өтімділік таңдалған баға диапазонынд�
 [Пулды Explorer-де ашу](https://explorer.solana.com/address/FWHDW6erKmWytfLFF2Mcuq9maBYLEEy847EGmNPunMUB?cluster=devnet)
 
 [Пул құру транзакциясы](https://explorer.solana.com/tx/3XvpEVzNDhqoRdTjpuQvrMsTtFojodw2CWovRAwx3gVUWRkns8qcJBsAVEZX8WAAByLrtTGCDZVMZ2qCeEzaRQMR?cluster=devnet)
+
+### PDF әдістемесі бойынша өтімділік позициясын ашу
+
+`scripts/open-clmm-position.ts` бұрын құрылған пулды `devnet-pool.json` файлынан оқиды.
+Пулдың актуалды бағасы мен аккаунттары devnet RPC арқылы алынады.
+Позицияға негізгі токеннен 100 бірлік параметрі беріліп, екінші токеннің ең үлкен мөлшері
+1% slippage арқылы есептеледі. Баға диапазоны ағымдағы бағадан шамамен 10% төмен және
+10% жоғары таңдалып, пулдың тик қадамына сәйкестендіріледі.
+
+Ubuntu немесе WSL терминалында орындау
+
+```bash
+yarn open-position --simulate
+yarn open-position
+```
+
+`--simulate` режимі ашық әмиян адресімен транзакцияны желіде симуляциялайды.
+Негізгі іске қосуда `ANCHOR_WALLET` не `~/.config/solana/id.json` әмияны қолданылады.
+RPC адресін `DEVNET_RPC` айнымалысымен көрсетуге болады.
+
+Сәтті операциядан кейін позиция NFT-і, personal position, protocol position, tick array,
+пул қоймалары мен observation аккаунты `devnet-pool.json` файлына қосылады.
+README-де нақты диапазон, оны таңдау себебі және Explorer сілтемелері автоматты түрде жазылады.
+
+Қайта іске қосу бұрын ашылған позицияны тексеріп, нәтижелерді жаңартады.
+NFT mint кілті мен позиция жоспары қалпына келтіру үшін жергілікті `.anchor/week11-position/`
+бумасына сақталады. Ubuntu-дағы `flock` бір уақытта бір іске қосуды қамтамасыз етеді.
+
+Негізге алынған ресми мысал — [Raydium CLMM createPosition](https://github.com/raydium-io/raydium-sdk-V2-demo/blob/master/src/clmm/createPosition.ts).
+Код жобадағы `0.2.41-alpha` SDK интерфейсіне сәйкестендірілді.

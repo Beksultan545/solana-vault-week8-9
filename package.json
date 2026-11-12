@@ -5,7 +5,8 @@
     "build": "anchor build",
     "test": "anchor test --provider.cluster devnet --skip-local-validator --skip-deploy",
     "deploy": "anchor deploy --provider.cluster devnet",
-    "create-pool": "ts-node scripts/create-clmm-pool.ts"
+    "create-pool": "ts-node scripts/create-clmm-pool.ts",
+    "open-position": "mkdir -p .anchor && flock -n .anchor/week11-position.lock ts-node scripts/open-clmm-position.ts"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",
