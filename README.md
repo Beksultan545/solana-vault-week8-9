@@ -310,3 +310,28 @@ A пайдаланушысы 50 токен шығарғаннан кейін vau
 - [B пайдаланушысының шығару транзакциясы](https://explorer.solana.com/tx/2aYSRUNzcJcyLag52b8i93oqYKmLtVdHoFLxArEdevwnDjigsxLPhvmYTgfqu4CxSgiwpJCFev5uCVtaFAXimfQD?cluster=devnet)
 
 Бағдарлама devnet-ке сәтті жүктелді. `yarn test` нәтижесі — `12 passing`. Нөлдік сомамен, баланстан артық және карточкасыз шығару әрекеттері қабылданбады.
+
+## 11-апта — Өз токендерім және Raydium CLMM пулы
+
+Ағайдың create-clmm-pool.ts скриптімен Solana devnet желісінде
+екі SPL-токен мен Raydium CLMM пулын құрдым.
+Әр токеннің дәлдігі 6 ондық таңба, әрқайсысынан 1 000 000 шығарылды.
+
+- TOKEN_A — `GRfDuvwzySPT4oN3ZU6CK8keQNw5UhVDzHpXmzQFPcou`
+- TOKEN_B — `4iVa91kmR9xthMY4xUueGt4iyAXXjDUr9nSUB49DGU5r`
+- Пул — `FWHDW6erKmWytfLFF2Mcuq9maBYLEEy847EGmNPunMUB`
+- Комиссия конфигурациясы — `CD4aJtX11cqTCAc83nxSPkkh5JW2yjD6uwHeovjqQ1qu`
+- Raydium бағдарламасы — `DRayAUgENGQBKVaX8owNhgzkEDyoHTGVEGHVJT1E9pfH`
+
+Бастапқы баға 1 TOKEN_A = 1 TOKEN_B.
+Тик қадамы 60, сауда комиссиясы 0.25%.
+
+CLMM-де өтімділік таңдалған баға диапазонында жұмыс істейді.
+Баға диапазоннан шыққанда позиция комиссия жинауды тоқтатады.
+
+Тәуелділіктерді сәйкестендіргеннен кейін TypeScript тексеруі өтті.
+Скрипттің нәтижелері devnet-pool.json файлына сақталды.
+
+[Пулды Explorer-де ашу](https://explorer.solana.com/address/FWHDW6erKmWytfLFF2Mcuq9maBYLEEy847EGmNPunMUB?cluster=devnet)
+
+[Пул құру транзакциясы](https://explorer.solana.com/tx/3XvpEVzNDhqoRdTjpuQvrMsTtFojodw2CWovRAwx3gVUWRkns8qcJBsAVEZX8WAAByLrtTGCDZVMZ2qCeEzaRQMR?cluster=devnet)
