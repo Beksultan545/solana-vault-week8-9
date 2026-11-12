@@ -365,3 +365,31 @@ NFT mint кілті мен позиция жоспары қалпына келт
 
 Негізге алынған ресми мысал — [Raydium CLMM createPosition](https://github.com/raydium-io/raydium-sdk-V2-demo/blob/master/src/clmm/createPosition.ts).
 Код жобадағы `0.2.41-alpha` SDK интерфейсіне сәйкестендірілді.
+
+<!-- week11-position:start -->
+### 11-аптадағы өтімділік позициясы
+
+Бар CLMM пулында өз әмиянымнан бір өтімділік позициясын аштым.
+Негізгі токеннен 100 бірлік енгізу параметрі және екінші токенге 1% slippage шегі қолданылды.
+Баға Raydium пулындағы бір mintA токеніне шаққандағы mintB мөлшерімен көрсетілген.
+
+- Пулдың mintA токені — `4iVa91kmR9xthMY4xUueGt4iyAXXjDUr9nSUB49DGU5r`
+- Пулдың mintB токені — `GRfDuvwzySPT4oN3ZU6CK8keQNw5UhVDzHpXmzQFPcou`
+- Тексеру кезіндегі баға — 1.000000000000
+- Диапазон — 0.897632443309 — 1.100753780715
+- Тиктер — -1080 — 960
+- Позиция өтімділігі — `2133837462`
+- [Позиция аккаунты](https://explorer.solana.com/address/EkSzkpJ1oZtDy5PsREvozLDRnB9zas7WA3bi1cnJyZt1?cluster=devnet)
+- [Позиция NFT mint](https://explorer.solana.com/address/3pp3dyJW2tPFmwE7fcSmX6cPe7pj61goaqkS3Zs35gDX?cluster=devnet)
+- [NFT токен аккаунты](https://explorer.solana.com/address/4YPMMtLFczdWsW1ENzMsGmat1C9A38Eo3XXUyjjVvexu?cluster=devnet)
+- [Төменгі tick array](https://explorer.solana.com/address/HCvhr6qrWDf1WCEv2BHr3WEPgmwSxb5setD1uKfAYxNj?cluster=devnet)
+- [Жоғарғы tick array](https://explorer.solana.com/address/2GDmwLgBsd6LGcfmguvMiTHbWnmFXYJfw7BVstr1vC1Q?cluster=devnet)
+- [Пулдың vaultA аккаунты](https://explorer.solana.com/address/5w4fDS4LWJHSAK7ivPcL2S7MkmayCHgBeAyo5DvE5Rce?cluster=devnet)
+- [Пулдың vaultB аккаунты](https://explorer.solana.com/address/4HjmtkU56k8gsAcPM2VPUmNTwy9iVzH7Mfqh4YuZzfKH?cluster=devnet)
+- [Observation аккаунты](https://explorer.solana.com/address/7JusnWjCR5f2G383yJYb49xGurYCGHGVpqWDP6NWa99z?cluster=devnet)
+- [Позиция ашу транзакциясы](https://explorer.solana.com/tx/3bR3MAVgaLVtAnBv2HdNGLaY8QLghXkNKLasVqP9v9nHsSMrUHpGPqm7Ti4dY1rUdrktJWrS41XpE8pfoMY2fuwT?cluster=devnet)
+
+Ағымдағы бағадан шамамен 10% төмен және 10% жоғары аралықты таңдадым. Бұл бағаға екі жаққа қозғалу мүмкіндігін береді және өтімділікті нақты аралыққа шоғырландырады. Шекаралар пулдың тик қадамына сәйкестендірілді.
+
+Позиция мен пул аккаунттарының адрестері devnet-pool.json файлына қосылды.
+<!-- week11-position:end -->
