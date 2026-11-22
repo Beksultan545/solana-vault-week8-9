@@ -393,3 +393,37 @@ NFT mint кілті мен позиция жоспары қалпына келт
 
 Позиция мен пул аккаунттарының адрестері devnet-pool.json файлына қосылды.
 <!-- week11-position:end -->
+
+## 12-апта — Vault арқылы Raydium CLMM swap
+
+Vault-қа `add_pair_token` арқылы `TOKEN_B` қоймасын қостым.
+Айырбасты әкімші іске қосады. `simple_vault` бағдарламасы vault PDA атынан
+Raydium CLMM-нің `swap_v2` нұсқауын `raydium-clmm-cpi` арқылы шақырады.
+
+### Сәтті swap
+
+5 `TOKEN_A` үшін Raydium SDK 4.975869 `TOKEN_B` шығатынын есептеді.
+Күтілетін мөлшерден 1% төмен `min_amount_out` қойдым.
+Минимум 4.926110 `TOKEN_B`, ал vault нақты 4.975869 `TOKEN_B` алды.
+
+| Көрсеткіш | Swap алдында | Swap кейін |
+| --- | ---: | ---: |
+| Vault-тағы `TOKEN_A` | 20.000000 | 15.000000 |
+| Vault-тағы `TOKEN_B` | 0.000000 | 4.975869 |
+| 1 `TOKEN_A` бағасы, `TOKEN_B` бірлігімен | 1.000000000000 | 0.995341661947 |
+
+[Сәтті swap транзакциясы](https://explorer.solana.com/tx/2AKFtWtNgoUTdrvtbto7TMcuyx1QUJTSdHfpgdjH7V889ZkoFtDVmsjDym7gA1fMVWm1wngCfEwK9CtAaY9ETgig?cluster=devnet)
+
+### Slippage қорғанысын тексеру
+
+1 `TOKEN_A` үшін күтілетін нәтиже 0.992390 `TOKEN_B` болды.
+Минимумды әдейі мүмкін нәтижеден жоғары қойдым.
+Raydium транзакцияны `TooLittleOutputReceived` (`6018`) қатесімен кері қайтарды.
+Сынаққа дейін де, кейін де vault-та 15.000000 `TOKEN_A` және 4.975869 `TOKEN_B` болды.
+
+[Slippage себебінен кері қайтарылған транзакция](https://explorer.solana.com/tx/4rPo3vJoemF46op2pZHWG9s6bzXxPdNJbUrmrgZZFXuxsPgcues8CQq9Vw2DzW38cCFDdSzbLX1JG6xGaiGFaqmk?cluster=devnet)
+
+- [Devnet бағдарламасы](https://explorer.solana.com/address/FpCFg8WWuXHwTQK8PPRau5aA71YjdKBiAhgDm3d7rNQy?cluster=devnet)
+- [Vault PDA](https://explorer.solana.com/address/FPG8Ai5G27v8NVKzZRiE8yVZGiSX6fuVzzHLrm3QTRFX?cluster=devnet)
+- [Raydium CLMM пулы](https://explorer.solana.com/address/FWHDW6erKmWytfLFF2Mcuq9maBYLEEy847EGmNPunMUB?cluster=devnet)
+- [Ағайдың шаблоны](https://github.com/0xnurda/vault-dev/commit/26ac3a6)

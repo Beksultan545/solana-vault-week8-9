@@ -1,11 +1,33 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Burn, Mint, MintTo, Token, TokenAccount, Transfer};
 
-declare_id!("3gXDYQzb7iEjuVQVS5mxnzF9y6DgkBjKUpgxSJF9APzN");
+pub mod raydium;
+use raydium::*;
+
+declare_id!("FpCFg8WWuXHwTQK8PPRau5aA71YjdKBiAhgDm3d7rNQy");
 
 #[program]
 pub mod simple_vault {
     use super::*;
+
+    pub fn add_pair_token(ctx: Context<AddPairToken>) -> Result<()> {
+        raydium::add_pair_token(ctx)
+    }
+
+    /// Неделя 12. Админ обменивает токены vault через пул Raydium.
+    pub fn swap<'a, 'b, 'c: 'info, 'info>(
+        ctx: Context<'a, 'b, 'c, 'info, VaultSwap<'info>>,
+        amount_in: u64,
+        min_amount_out: u64,
+        a_to_b: bool,
+    ) -> Result<()> {
+        raydium::swap(ctx, amount_in, min_amount_out, a_to_b)
+    }
+
+    /// Вернуть vault в обычный режим, когда всё снова в TOKEN_A.
+    pub fn sync_vault(ctx: Context<SyncVault>) -> Result<()> {
+        raydium::sync_vault(ctx)
+    }
 
     /// Создать vault для конкретного SPL-токена.
     /// Создаёт: VaultState PDA, vault_token_account PDA, share_mint PDA.
@@ -42,6 +64,7 @@ pub mod simple_vault {
     ///   Последующие депозиты: shares = amount * total_shares / total_tokens
     pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
         require!(amount > 0, VaultError::ZeroAmount);
+        require!(!ctx.accounts.vault_state.in_market, VaultError::InMarket);
 
         let vault = &ctx.accounts.vault_state;
 
@@ -113,6 +136,7 @@ pub mod simple_vault {
     /// Формула: tokens = shares * total_tokens / total_shares
     pub fn withdraw(ctx: Context<Withdraw>, shares_amount: u64) -> Result<()> {
         require!(shares_amount > 0, VaultError::ZeroAmount);
+        require!(!ctx.accounts.vault_state.in_market, VaultError::InMarket);
 
         let vault = &ctx.accounts.vault_state;
         require!(vault.total_shares > 0, VaultError::VaultEmpty);
@@ -381,10 +405,14 @@ pub struct VaultState {
     pub total_tokens: u64,           // 8  — всего токенов в vault
     pub total_shares: u64,           // 8  — всего выпущено shares
     pub bump: u8,                    // 1
+    pub token_mint_b: Pubkey,        // 32 — второй токен пары (неделя 12), default = нет
+    pub vault_token_account_b: Pubkey, // 32 — PDA для TOKEN_B
+    pub position_nft_mint: Pubkey,   // 32 — NFT открытой позиции (неделя 13), default = нет
+    pub in_market: bool,             // 1  — деньги в TOKEN_B/позиции: deposit и withdraw на паузе
 }
 
 impl VaultState {
-    pub const LEN: usize = 8 + 32 + 32 + 32 + 32 + 8 + 8 + 1;
+    pub const LEN: usize = 8 + 32 + 32 + 32 + 32 + 8 + 8 + 1 + 32 + 32 + 32 + 1;
 }
 
 /// Карточка пользователя в vault.
@@ -418,4 +446,18 @@ pub enum VaultError {
     WithdrawTooSmall,
     #[msg("Math overflow")]
     MathOverflow,
+    #[msg("Unauthorized: only admin can call this")]
+    Unauthorized,
+    #[msg("Pair token must differ from vault token")]
+    SameToken,
+    #[msg("Vault funds are in the market")]
+    InMarket,
+    #[msg("Second token is not configured")]
+    PairNotSet,
+    #[msg("Pool does not match vault token pair")]
+    WrongPool,
+    #[msg("Close the position before syncing")]
+    PositionOpen,
+    #[msg("Swap the remaining second token back before syncing")]
+    TokenBNotZero,
 }
