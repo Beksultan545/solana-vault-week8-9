@@ -427,3 +427,34 @@ Raydium транзакцияны `TooLittleOutputReceived` (`6018`) қатесі
 - [Vault PDA](https://explorer.solana.com/address/FPG8Ai5G27v8NVKzZRiE8yVZGiSX6fuVzzHLrm3QTRFX?cluster=devnet)
 - [Raydium CLMM пулы](https://explorer.solana.com/address/FWHDW6erKmWytfLFF2Mcuq9maBYLEEy847EGmNPunMUB?cluster=devnet)
 - [Ағайдың шаблоны](https://github.com/0xnurda/vault-dev/commit/26ac3a6)
+
+## 13-апта — Vault-тың CLMM позициясы және қайта теңгеру
+
+Vault әкімшісі `open_position` арқылы позиция ашады, `collect_fees` арқылы
+комиссияны алады, `close_position` арқылы өтімділікті шығарып, позицияны жабады.
+Үш нұсқау да Raydium CLMM бағдарламасын CPI арқылы шақырады.
+Позиция NFT-інің иесі — vault PDA. Бағалар 1 `TOKEN_B` үшін берілетін
+`TOKEN_A` мөлшерімен көрсетілген.
+
+[Ағайдың шаблоны](https://github.com/0xnurda/vault-dev/commit/26ac3a6) · [Devnet жаңартуы](https://explorer.solana.com/tx/DJHvhJLreTF4Mnu35Jxri1rSLvCtTcA3RuzzBvjdN7p9uTnEhv6L5oMPnuX7fPKUze8ZdghqBUqU1UR6rk6x1iy?cluster=devnet) · [Vault PDA](https://explorer.solana.com/address/FPG8Ai5G27v8NVKzZRiE8yVZGiSX6fuVzzHLrm3QTRFX?cluster=devnet)
+
+### Позиция ашу, комиссия алу және жабу
+
+Ашу кезінде пул бағасы 1.004680139726 болды. Диапазонды шамамен ±5% етіп алып,
+шектерін пулдың 60 тик қадамына сәйкестендірдім. Нақты диапазон
+**0.953136074449–1.055481752540**, тиктер **−480…540** болды.
+
+- Лимиттер 4.330032 `TOKEN_A` және 4.000000 `TOKEN_B` болды. Vault нақты 4.287161 `TOKEN_A` және 4.000000 `TOKEN_B` салды. [Позицияны ашу](https://explorer.solana.com/tx/3f73GouRvQqZkLCUk3ZYL86wXQWiRn5LS1KnMkx6rct2HbPugLgF34vTEhsdUR4ZgALXt5nv65NydMfLQZAFpUg8?cluster=devnet)
+- Бөлек `GC89pup3sMsc183o2C1zpBPtD51cui27oVMxmUN29Nvc` әмияны 2 `TOKEN_A` және 2 `TOKEN_B` мөлшерін қарама-қарсы бағытта айырбастады. Баға позиция диапазонында қалды. [Екі swap](https://explorer.solana.com/tx/5oNN9K2tJvuzpa81ZMuHtMZfFZBoSW5DtcZ7jRFyqJaLbA3hz3mkmoRPwy3bNYoPr98PCuWEWTK5jf7iiLGvNS6r?cluster=devnet)
+- Vault-қа **0.000300 `TOKEN_A`** және **0.000300 `TOKEN_B`** комиссия түсті. Позицияның өтімділігі 164571421 болды. [Комиссия алу](https://explorer.solana.com/tx/54qJBRFZDFdsPFpqtT2nh6WNJRZvcJiCZDHSYi99tfUEDofrUYsAn3A2Pna8SLk3arQWAeiakdTC5BwwnYrx1JFb?cluster=devnet)
+- Жабу кезінде **4.286368 `TOKEN_A`** және **4.000788 `TOKEN_B`** қайтты. Күтілетін мөлшерден 1% төмен минимум қойылды. Минимумдар 4.243504 `TOKEN_A` және 3.960780 `TOKEN_B` болды. [Позицияны жабу](https://explorer.solana.com/tx/3Coy7h6NQ2X3TDj2BL4x2M5ecjaL1LFHEnqAWUa6ZtqoJW4hoCLQ7GBEAujSsa3Ph72xoyfYy1dVfEbvQa7p3QA6?cluster=devnet)
+
+### Қайта теңгеру
+
+1. Ескі диапазонда (−480…540) 2.142762 `TOKEN_A` және 2.000000 `TOKEN_B` салынды. [Шағын позиция ашу](https://explorer.solana.com/tx/5VfYFA8k1RqvjW2bcpRxSM1DzpcFNUev2kacHzdx4rUVZfWPn6EwtLnCfTW9kRSUQFuF9kVyqFqdrsjM3cHv5mvd?cluster=devnet)
+2. Сынақ әмияны 60 `TOKEN_A` беріп, 58.008476 `TOKEN_B` алды. Баға **1.004670490644 → 1.059696085045**, тик **46 → 579** болып, 540 жоғарғы шегінен асты. [Бағаны диапазоннан шығарған swap](https://explorer.solana.com/tx/5q9XZLms13Dkpu3YmC8aYaTHb8xbjqgQB3ya7J33jjBpBRj3KS9ihoTFFLBrf99azLhdzBMauMmGyBxfEDkxQK5p?cluster=devnet)
+3. Vault-қа **4.206622 `TOKEN_A`** және **0 `TOKEN_B`** қайтты. `TOKEN_A` сомасына 4.202287 өтімділік қайтарымы және 0.004335 комиссия кірді. Жабу минимумы 4.160264 `TOKEN_A` және 0 `TOKEN_B` болды. [Ескі позицияны жабу](https://explorer.solana.com/tx/EtykufJ8CxymZ8cwQD2wVFZYdmixZLN2PNezykJxqXYivxqXR8kjfL4oDRfxZFAT25TSGQqR5moLxZjMnGqxKUn?cluster=devnet)
+4. Баға **1.059696085045** болғанда **1.006017734269–1.114041729946** жаңа диапазоны таңдалды. Тиктер **60…1080**. Vault 2.201796 `TOKEN_A` және 2.000000 `TOKEN_B` салды. [Жаңа позицияны ашу](https://explorer.solana.com/tx/hSTpUSHfWR2civENev8KN6Mi3ddgw8VQrMAedt6U7RY5EKbEHAaQhGxWxiaMmUAoPdVSL6JbH7trmbpYyE4tXEF?cluster=devnet) · [Жаңа позиция](https://explorer.solana.com/address/HwJSFHmFQFUA7hDWEoFVg7inenLjXR22edrE8vUxVnxP?cluster=devnet) · [Vault-қа тиесілі NFT](https://explorer.solana.com/address/CwPJVsMKubH5h24cZWMQM9cSeHYBCRTTYas9CzCHVZCD?cluster=devnet)
+
+Екі жабылған позициядан барлығы **0.004635 `TOKEN_A`** және
+**0.000300 `TOKEN_B`** комиссия алынды.

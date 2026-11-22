@@ -24,6 +24,45 @@ pub mod simple_vault {
         raydium::swap(ctx, amount_in, min_amount_out, a_to_b)
     }
 
+    /// Неделя 13. Админ открывает позицию vault в ценовом диапазоне.
+    pub fn open_position<'a, 'b, 'c: 'info, 'info>(
+        ctx: Context<'a, 'b, 'c, 'info, VaultOpenPosition<'info>>,
+        tick_lower_index: i32,
+        tick_upper_index: i32,
+        tick_array_lower_start_index: i32,
+        tick_array_upper_start_index: i32,
+        amount_0_max: u64,
+        amount_1_max: u64,
+        base_0: bool,
+    ) -> Result<()> {
+        raydium::open_position(
+            ctx,
+            tick_lower_index,
+            tick_upper_index,
+            tick_array_lower_start_index,
+            tick_array_upper_start_index,
+            amount_0_max,
+            amount_1_max,
+            base_0,
+        )
+    }
+
+    /// Неделя 13. Админ забирает накопленные комиссии позиции в vault.
+    pub fn collect_fees<'a, 'b, 'c: 'info, 'info>(
+        ctx: Context<'a, 'b, 'c, 'info, VaultPosition<'info>>,
+    ) -> Result<()> {
+        raydium::collect_fees(ctx)
+    }
+
+    /// Неделя 13. Админ закрывает позицию: всё возвращается в vault.
+    pub fn close_position<'a, 'b, 'c: 'info, 'info>(
+        ctx: Context<'a, 'b, 'c, 'info, VaultPosition<'info>>,
+        amount_0_min: u64,
+        amount_1_min: u64,
+    ) -> Result<()> {
+        raydium::close_position(ctx, amount_0_min, amount_1_min)
+    }
+
     /// Вернуть vault в обычный режим, когда всё снова в TOKEN_A.
     pub fn sync_vault(ctx: Context<SyncVault>) -> Result<()> {
         raydium::sync_vault(ctx)
@@ -460,4 +499,10 @@ pub enum VaultError {
     PositionOpen,
     #[msg("Swap the remaining second token back before syncing")]
     TokenBNotZero,
+    #[msg("tick_lower must be less than tick_upper")]
+    InvalidTickRange,
+    #[msg("Position is already open")]
+    PositionAlreadyOpen,
+    #[msg("No open position")]
+    NoOpenPosition,
 }
